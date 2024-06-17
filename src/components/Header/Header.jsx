@@ -1,17 +1,17 @@
 import "./Header.css";
 import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
-import Slide from "@mui/material/Slide";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import Fade from "@mui/material/Fade";
-import { styled } from "@mui/material/styles";
-import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
+import FormGroup from "@mui/material/FormGroup";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Slide from "@mui/material/Slide";
+import Switch from "@mui/material/Switch";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import useScrollTrigger from "@mui/material/useScrollTrigger";
+import { styled } from "@mui/material/styles";
 
 const HideOnScroll = (props) => {
   const { children } = props;
@@ -33,7 +33,7 @@ const ScrollTop = (props) => {
 
   const handleClick = (event) => {
     const anchor = (event.target.ownerDocument || document).querySelector(
-      "#back-to-top-anchor"
+      "#toolbar-anchor"
     );
 
     if (anchor) {
@@ -55,6 +55,16 @@ const ScrollTop = (props) => {
     </Fade>
   );
 };
+
+const CustomHeader = styled(AppBar)(({ theme }) => ({
+  width: "90%",
+  backgroundColor: theme.palette.mode === "dark" ? "#00000066" : "#ffffff66",
+  borderColor: theme.palette.mode === "dark" ? "#4c59674d" : "#bfccd980",
+}));
+
+const CustomHeaderTitle = styled(Typography)(({ theme }) => ({
+  color: theme.palette.mode === "dark" ? "#FFF" : "#000",
+}));
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 62,
@@ -107,12 +117,12 @@ export default function HideAppBar(props) {
   return (
     <>
       <HideOnScroll {...props}>
-        <AppBar>
+        <CustomHeader className="c-header__appbar">
           <Toolbar>
-            <div className="c-header">
-              <Typography variant="h6" component="div">
-                Open FDA
-              </Typography>
+            <Box className="c-header__box">
+              <CustomHeaderTitle variant="h6" component="div">
+                Jaraxa Software
+              </CustomHeaderTitle>
               <FormGroup>
                 <FormControlLabel
                   control={
@@ -124,11 +134,11 @@ export default function HideAppBar(props) {
                   }
                 />
               </FormGroup>
-            </div>
+            </Box>
           </Toolbar>
-        </AppBar>
+        </CustomHeader>
       </HideOnScroll>
-      <Toolbar id="back-to-top-anchor" />
+      <Toolbar id="toolbar-anchor" />
       <ScrollTop {...props}>
         <Fab size="small" aria-label="scroll back to top">
           <KeyboardArrowUpIcon />

@@ -1,4 +1,10 @@
-.c-header {
+.c-header__appbar {
+  margin: 1rem 5%;
+  border: 1px solid;
+  border-radius: 50px;
+}
+
+.c-header__box {
   width: 100%;
   display: flex;
   align-items: center;

@@ -1,30 +1,40 @@
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+//import { styled } from "@mui/material/styles";
 
-export default function DrugCard(props) {
+export default function DrugCard({ results }) {
+  // const CustomCard = styled(Card)(({ theme }) => ({
+  //   backgroundColor: theme.palette.mode === "dark" ? "#02294f33" : "#9cccfc33",
+  //   border: `qpx solid ${
+  //     theme.palette.mode === "dark" ? "#02294f" : "#9CCCFC"
+  //   }`,
+  // }));
+
   return (
-    <Card sx={{ width: 275 }}>
+    <Card sx={{ width: 275, margin: 1 }}>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          {props.title}
+          {results.sponsor_name}
         </Typography>
         <Typography variant="h5" component="div">
-          ofu
+          Productos
         </Typography>
         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          adjective
+          {results.application_number}
         </Typography>
         <Typography variant="body2">
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
+          {results?.products.map((product) => (
+            <li key={product.product_number}>
+              <Typography component="span">{product.brand_name}</Typography>
+            </li>
+          ))}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Learn More</Button>
+        <Button size="small">Ver más</Button>
       </CardActions>
     </Card>
   );

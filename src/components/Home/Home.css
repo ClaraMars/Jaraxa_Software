@@ -1,8 +1,29 @@
-.c-home__search {
+.c-home__box-titles {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  text-align: center;
+  margin: 3rem auto;
+}
+
+.c-home__box-search {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+
+  .c-home__box-search-form {
+    width: 70%;
+    .c-home__form-search--input {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      @media (max-width: 576px) {
+        flex-direction: column;
+      }
+    }
+  }
 }
 
 .c-home__grid-header-wrapper {

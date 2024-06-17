@@ -1,22 +1,13 @@
-import { createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 
-export function createLightTheme() {
-  return createTheme({
-    palette: {
-      mode: "light",
-    },
-  });
-}
-
-export function createDarkTheme() {
-  return createTheme({
-    palette: {
-      mode: "dark",
-    },
-  });
-}
+export const BASE_FDA_API_ENDPOINTS = {
+  event: `https://api.fda.gov/drug/event.json`,
+  label: `https://api.fda.gov/drug/label.json`,
+  ncd: `https://api.fda.gov/drug/ndc.json`,
+  enforcement: `https://api.fda.gov/drug/enforcement.json`,
+  drugsFDA: `https://api.fda.gov/drug/drugsfda.json`,
+};
 
 export function GradientCircularProgress() {
   return (
