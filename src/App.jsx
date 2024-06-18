@@ -6,6 +6,7 @@ import { createLightTheme, createDarkTheme } from "./utils/Theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import Header from "./components/Header/Header";
 import Home from "./components/Home/Home";
+import Details from "./components/Details/Details";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -21,6 +22,7 @@ function App() {
         <Header handleThemeChange={handleThemeChange} darkMode={darkMode} />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/drug/:applicationNumber" element={<Details />} />
         </Routes>
       </Router>
     </ThemeProvider>

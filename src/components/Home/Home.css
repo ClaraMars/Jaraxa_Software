@@ -24,6 +24,9 @@
       }
     }
   }
+  .c-home__box-search-filter {
+    width: 70%;
+  }
 }
 
 .c-home__grid-header-wrapper {

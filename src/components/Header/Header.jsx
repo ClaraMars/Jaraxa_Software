@@ -6,23 +6,11 @@ import Fade from "@mui/material/Fade";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Slide from "@mui/material/Slide";
 import Switch from "@mui/material/Switch";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import { styled } from "@mui/material/styles";
-
-const HideOnScroll = (props) => {
-  const { children } = props;
-  const trigger = useScrollTrigger();
-
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-};
 
 const ScrollTop = (props) => {
   const { children } = props;
@@ -64,6 +52,20 @@ const CustomHeader = styled(AppBar)(({ theme }) => ({
 
 const CustomHeaderTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.mode === "dark" ? "#FFF" : "#000",
+}));
+
+const CustomFab = styled(Fab)(({ theme }) => ({
+  color: theme.palette.mode === "dark" ? "#BFBFBF" : "#000",
+  backgroundColor: theme.palette.mode === "dark" ? "#004d9988" : "#deefff",
+  "&:hover": {
+    backgroundColor: theme.palette.mode === "dark" ? "#004d99" : "#99ccff",
+  },
+  border: "1px solid",
+  borderColor: theme.palette.mode === "dark" ? "#0061c2" : "#99ccff",
+  boxShadow:
+    theme.palette.mode === "dark"
+      ? "0px 4px 12px #000000cc"
+      : "0px 4px 12px #0000001a",
 }));
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -116,33 +118,31 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 export default function HideAppBar(props) {
   return (
     <>
-      <HideOnScroll {...props}>
-        <CustomHeader className="c-header__appbar">
-          <Toolbar>
-            <Box className="c-header__box">
-              <CustomHeaderTitle variant="h6" component="div">
-                Jaraxa Software
-              </CustomHeaderTitle>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <MaterialUISwitch
-                      sx={{ m: 1 }}
-                      defaultChecked
-                      onClick={props.handleThemeChange}
-                    />
-                  }
-                />
-              </FormGroup>
-            </Box>
-          </Toolbar>
-        </CustomHeader>
-      </HideOnScroll>
+      <CustomHeader className="c-header__appbar" position="static">
+        <Toolbar>
+          <Box className="c-header__box">
+            <CustomHeaderTitle variant="h6" component="div">
+              Jaraxa Software
+            </CustomHeaderTitle>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <MaterialUISwitch
+                    sx={{ m: 1 }}
+                    defaultChecked
+                    onClick={props.handleThemeChange}
+                  />
+                }
+              />
+            </FormGroup>
+          </Box>
+        </Toolbar>
+      </CustomHeader>
       <Toolbar id="toolbar-anchor" />
       <ScrollTop {...props}>
-        <Fab size="small" aria-label="scroll back to top">
+        <CustomFab size="small" aria-label="scroll back to top">
           <KeyboardArrowUpIcon />
-        </Fab>
+        </CustomFab>
       </ScrollTop>
     </>
   );

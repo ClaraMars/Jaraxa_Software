@@ -1,32 +1,34 @@
+import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
+import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-//import { styled } from "@mui/material/styles";
 
-export default function DrugCard({ results }) {
-  // const CustomCard = styled(Card)(({ theme }) => ({
-  //   backgroundColor: theme.palette.mode === "dark" ? "#02294f33" : "#9cccfc33",
-  //   border: `qpx solid ${
-  //     theme.palette.mode === "dark" ? "#02294f" : "#9CCCFC"
-  //   }`,
-  // }));
+export default function DrugCard(props) {
+  const navigate = useNavigate();
+
+  const handleCardDetails = () => {
+    const applicationNumber = props.results.application_number;
+    navigate(`/drug/${applicationNumber}`, { state: { data: props.results } });
+  };
 
   return (
-    <Card sx={{ width: 275, margin: 1 }}>
+    <Card sx={{ width: 275, margin: 1, border: "1px solid #454545" }}>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          {results.sponsor_name}
+          {props.results.sponsor_name}
         </Typography>
         <Typography variant="h5" component="div">
           Productos
         </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          {results.application_number}
+        <Typography mb={1.5} color="text.secondary">
+          {props.results.application_number}
         </Typography>
+        <Divider />
         <Typography variant="body2">
-          {results?.products.map((product) => (
+          {props.results?.products.map((product) => (
             <li key={product.product_number}>
               <Typography component="span">{product.brand_name}</Typography>
             </li>
@@ -34,7 +36,9 @@ export default function DrugCard({ results }) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Ver más</Button>
+        <Button size="small" onClick={handleCardDetails}>
+          Ver más
+        </Button>
       </CardActions>
     </Card>
   );
