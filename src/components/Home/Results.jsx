@@ -15,26 +15,42 @@ import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 export function Results(props) {
   const [page, setPage] = useState(1);
   const [loadMoreResults, setLoadMoreResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const skip = props.query.limit * page;
   const url = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?search=${props.query.term}&limit=${props.query.limit}&skip=${skip}`;
 
   const getMoreResults = async () => {
+    setIsLoading(true);
     setPage(page + 1);
     const results = await getDrugsResults(setLoadMoreResults, url);
     return results;
   };
 
-  const loadMore = async () => {
-    const newResults = await getMoreResults();
-    props.setResults((prevResults) => [
-      ...prevResults.data,
-      ...loadMoreResults.data,
-    ]);
+  const handleLoadMore = async () => {
+    await getMoreResults();
+    console.log(loadMoreResults);
+    setIsLoading(false);
+    if (loadMoreResults && loadMoreResults.data) {
+      props.setResults((prevResults) => ({
+        ...prevResults,
+        data: [...prevResults.data, ...loadMoreResults.data],
+      }));
+    }
   };
 
-  useEffect(() => {}, []);
+  // console.log(loadMoreResults, props.results);
 
-  console.log(url, props.results, loadMoreResults);
+  // const handleloadMore = async () => {
+  //   const newResults = await getMoreResults();
+  //   console.log(newResults);
+  //   loadMoreResults &&
+  //     loadMoreResults.data &&
+  //     props.setResults((prevResults) => ({
+  //       ...prevResults,
+  //       data: [...prevResults.data, ...loadMoreResults.data],
+  //     }));
+  // };
+
   return (
     <>
       <Typography variant="h6">Resultados de la búsqueda</Typography>
@@ -62,7 +78,11 @@ export function Results(props) {
                   <DrugCard key={index} results={drug} />
                 ))} */}
                 {props.results.data.length < props.results.totalResults && (
-                  <Button variant="contained" onClick={loadMore}>
+                  <Button
+                    variant="contained"
+                    disabled={isLoading}
+                    onClick={handleLoadMore}
+                  >
                     Mostrar más
                   </Button>
                 )}

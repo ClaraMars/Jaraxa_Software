@@ -35,9 +35,12 @@ export default function Home() {
     term: "",
     limit: 10,
     order: "asc",
+    skip: 0,
   });
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
+
+  const links = ["Ibuprofen", "Paracetamol", "Omeprazole"];
 
   // const FDA_API_ENDPOINTS = {
   //   drugsFDA: `${BASE_FDA_API_ENDPOINTS.drugsFDA}?search=${query.term}&limit=${query.limit}`,
@@ -53,18 +56,21 @@ export default function Home() {
       setError(true);
       return;
     }
-    const searchUrl = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?&search=${searchTerm}&limit=${limit}`;
+    const searchUrl = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?&search=${searchTerm}&limit=${limit}&skip=${query.skip}`;
     getDrugsResults(setResults, searchUrl);
   };
 
   useEffect(() => {
+    results && console.log("rendirizando resultados");
     if (error) {
       const timer = setTimeout(() => {
         setError(false);
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [error]);
+  }, [results, error]);
+
+  console.log(results);
 
   return (
     <>
@@ -121,9 +127,10 @@ export default function Home() {
         <Results query={query} results={results} setResults={setResults} />
       ) : (
         <Links
+          links={links}
           // setQuery={setQuery}
           // handleQuery={handleQuery}
-          handleSearch={(e) => handleSearch(e, query.term, query.limit)}
+          handleSearch={(e) => handleSearch(e, links, query.limit)}
         />
       )}
 

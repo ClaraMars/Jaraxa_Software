@@ -11,8 +11,6 @@ export function Links(props) {
   const dense = true;
   const secondary = false;
 
-  const links = ["Ibuprofen", "Paracetamol", "Omeprazole"];
-
   // const handleInputValue = (value) => {
   //   const syntheticEvent = {
   //     target: {
@@ -33,7 +31,7 @@ export function Links(props) {
     <Box>
       <Typography variant="h6">Enlaces rápidos</Typography>
       <List dense={dense}>
-        {links.map((link, index) => (
+        {props.links.map((link, index) => (
           <ListItem key={index}>
             <ListItemIcon>
               <EastIcon />
