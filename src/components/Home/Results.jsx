@@ -12,7 +12,18 @@ import Card from "../Card/Card";
 import Grid from "@mui/material/Unstable_Grid2";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
-export function Results(props) {
+export default function Results(props) {
+  const data = props.results;
+  const isOpenfdaNotEmpty = Object.keys(data.openfda || {}).length !== 0;
+  const sortedData = [...data.data].sort((a, b) => {
+    const nameA = isOpenfdaNotEmpty
+      ? a.openfda?.brand_name[0]
+      : a.products[0]?.brand_name;
+    const nameB = isOpenfdaNotEmpty
+      ? b.openfda?.brand_name[0]
+      : b.products[0]?.brand_name;
+    return nameA.localeCompare(nameB);
+  });
   const [page, setPage] = useState(1);
   const [loadMoreResults, setLoadMoreResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,11 +58,11 @@ export function Results(props) {
       <Typography variant="h6" mb={3}>
         Resultados de la búsqueda
       </Typography>
-      {props.results && (
+      {data && (
         <>
-          {props.results.totalResults !== 0 && (
+          {data.totalResults !== 0 && (
             <Typography mb={3}>
-              Total de resultados: {props.results.totalResults}
+              Total de resultados: {data.totalResults}
             </Typography>
           )}
 
@@ -63,20 +74,32 @@ export function Results(props) {
             ) : (
               <Box>
                 <Grid2 container spacing={2}>
-                  {props.results.data.map((drug, index) => (
+                  {/* {sortedData.map((drug, index) => (
+                    <Card key={index} results={drug} />
+                  ))} */}
+                  {data.data.map((drug, index) => (
                     <Card key={index} results={drug} />
                   ))}
                 </Grid2>
                 {isLoading && <GradientCircularProgress />}
-                {props.results.data.length < props.results.totalResults && (
-                  <Button
-                    style={{ margin: "2rem 0 4rem" }}
-                    variant="contained"
-                    disabled={isLoading}
-                    onClick={handleLoadMore}
-                  >
-                    Mostrar más
-                  </Button>
+                {props.loadMoreResults && props.loadMoreResults.data && (
+                  <Grid2 container spacing={2}>
+                    {props.loadMoreResults.data.map((drug, index) => (
+                      <Card key={index} results={drug} />
+                    ))}
+                  </Grid2>
+                )}
+                {data.data.length < data.totalResults && (
+                  <Box display="flex" justifyContent="center">
+                    <Button
+                      style={{ margin: "2rem 0 4rem" }}
+                      variant="contained"
+                      disabled={isLoading}
+                      onClick={handleLoadMore}
+                    >
+                      Mostrar más resultados
+                    </Button>
+                  </Box>
                 )}
               </Box>
             )}

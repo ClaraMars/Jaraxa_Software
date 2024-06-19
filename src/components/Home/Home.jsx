@@ -5,8 +5,8 @@ import {
   GradientCircularProgress,
 } from "../../utils/Utils";
 import { getDrugsResults } from "../../utils/Fetch";
-import { Links } from "./Links";
-import { Results } from "./Results";
+import Links from "./Links";
+import Results from "./Results";
 import { styled } from "@mui/system";
 import { Typography } from "@mui/material";
 import Alert from "@mui/material/Alert";
@@ -46,8 +46,9 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [addFilter, setAddFilter] = useState(false);
   const [searchTermFilter, setSearchTermFilter] = useState("");
+  const [changeLimit, setChangeLimit] = useState(false);
 
-  const links = ["Ibuprofen", "Paracetamol", "Omeprazole"];
+  //
 
   // const FDA_API_ENDPOINTS = {
   //   drugsFDA: `${BASE_FDA_API_ENDPOINTS.drugsFDA}?search=${query.term}&limit=${query.limit}`,
@@ -63,10 +64,18 @@ export default function Home() {
       setError(true);
       return;
     }
+
+    const trimmedSearchTerm = searchTerm.trim();
+    console.log(trimmedSearchTerm);
+    if (trimmedSearchTerm.includes(" ")) {
+      console.log("contains space");
+    }
+
     const hasFilter = searchTermFilter
-      ? `${searchTermFilter}:${searchTerm}`
-      : `${searchTerm}`;
+      ? `${searchTermFilter}:${trimmedSearchTerm}`
+      : `${trimmedSearchTerm}`;
     const searchUrl = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?&search=${hasFilter}&limit=${limit}&skip=${query.skip}`;
+    console.log(searchUrl);
     await getDrugsResults(searchUrl, setResults, setIsLoading, setError);
   };
 
@@ -76,6 +85,17 @@ export default function Home() {
 
   const handleChangeFilter = (e) => {
     setSearchTermFilter(e.target.value);
+  };
+
+  const handleChangeLimit = (e) => {
+    setQuery((prevState) => ({ ...prevState, limit: e.target.value }));
+    setChangeLimit(true);
+  };
+
+  const handleLinkSearch = (e) => {
+    e.preventDefault();
+    setQuery((prevState) => ({ ...prevState, term: e.target.innerText }));
+    handleSearch(e, e.target.innerText, query.limit);
   };
 
   useEffect(() => {
@@ -132,40 +152,62 @@ export default function Home() {
           </Box>
         </FormControl>
         <Box className="c-home__box-search-filter">
-          <Box>
+          <Box display={"flex"} gap={3}>
             {addFilter && (
-              <FormControl sx={{ minWidth: 200 }} size="small">
-                <InputLabel id="search-fields-label">
-                  Campo de búsqueda
-                </InputLabel>
-                <Select
-                  labelId="search-fields-label"
-                  id="search-fields"
-                  value={searchTermFilter}
-                  label="Campo de búsqueda"
-                  onChange={handleChangeFilter}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={"application_number"}>
-                    Número de aplicación
-                  </MenuItem>
-                  <MenuItem value={"openfda.manufacturer_name"}>
-                    Fabricante
-                  </MenuItem>
-                  <MenuItem value={"sponsor_name"}>Patrocinador</MenuItem>
-                  <MenuItem value={"openfda.brand_name"}>
-                    Nombre de marca
-                  </MenuItem>
-                  <MenuItem value={"openfda.generic_name"}>
-                    Nombre genérico
-                  </MenuItem>
-                </Select>
-              </FormControl>
+              <>
+                <FormControl sx={{ minWidth: 200 }} size="small">
+                  <InputLabel id="search-fields-label">
+                    Campo de búsqueda
+                  </InputLabel>
+                  <Select
+                    labelId="search-fields-label"
+                    id="search-fields"
+                    value={searchTermFilter}
+                    label="Campo de búsqueda"
+                    onChange={handleChangeFilter}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={"application_number"}>
+                      Número de aplicación
+                    </MenuItem>
+                    <MenuItem value={"openfda.manufacturer_name"}>
+                      Fabricante
+                    </MenuItem>
+                    <MenuItem value={"sponsor_name"}>Patrocinador</MenuItem>
+                    <MenuItem value={"openfda.brand_name"}>
+                      Nombre de marca
+                    </MenuItem>
+                    <MenuItem value={"openfda.generic_name"}>
+                      Nombre genérico
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ minWidth: 120 }} size="small">
+                  <InputLabel id="change-limit-label">Por página</InputLabel>
+                  <Select
+                    labelId="change-limit-label"
+                    id="change-limit"
+                    value={searchTermFilter}
+                    label="Por página"
+                    onChange={handleChangeLimit}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={25}>25</MenuItem>
+                    <MenuItem value={50}>50</MenuItem>
+                    <MenuItem value={100}>100</MenuItem>
+                    <MenuItem value={"all"}>Todos</MenuItem>
+                  </Select>
+                </FormControl>
+              </>
             )}
           </Box>
           <Chip
+            disabled={addFilter}
             label="+ Añadir filtros"
             color="primary"
             variant="outlined"
@@ -193,12 +235,7 @@ export default function Home() {
             error={error}
           />
         ) : (
-          <Links
-            links={links}
-            // setQuery={setQuery}
-            // handleQuery={handleQuery}
-            handleSearch={(e) => handleSearch(e, links, query.limit)}
-          />
+          <Links handleLinkSearch={handleLinkSearch} />
         )}
       </Box>
 

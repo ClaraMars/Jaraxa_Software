@@ -12,11 +12,14 @@ import Typography from "@mui/material/Typography";
 export default function DrugCard(props) {
   const navigate = useNavigate();
   const data = props.results;
+  const isOpenfdaNotEmpty = Object.keys(data.openfda || {}).length !== 0;
 
   const handleCardDetails = () => {
     const applicationNumber = data.application_number;
     navigate(`/drug/${applicationNumber}`, { state: { data: data } });
   };
+
+  // console.log(data.openfda?.brand_name[0], data.products[0]?.brand_name);
 
   return (
     <Card sx={{ width: 300, margin: 1, border: "1px solid #454545" }}>
@@ -29,10 +32,15 @@ export default function DrugCard(props) {
       >
         <CardHeader
           style={{ padding: 0 }}
-          title={data.openfda?.generic_name[0] ?? data.products[0].brand_name}
+          title={
+            isOpenfdaNotEmpty
+              ? data.openfda?.brand_name?.slice(0, 2).join(", ") +
+                (data.openfda?.brand_name?.length > 2 ? "..." : "")
+              : data.products[0]?.brand_name
+          }
           subheader={data.application_number}
         />
-        {data.openfda?.route && (
+        {isOpenfdaNotEmpty && data.openfda?.route && (
           <Chip
             label={data.openfda?.route}
             color="primary"
@@ -47,10 +55,9 @@ export default function DrugCard(props) {
           {data.sponsor_name}
         </Typography>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          {data.openfda
-            ? data.openfda.manufacturer_name.slice(0, 2).join(", ") +
-              (data.openfda.manufacturer_name.length > 2 ? "..." : "")
-            : ""}
+          {isOpenfdaNotEmpty &&
+            data.openfda.manufacturer_name?.slice(0, 2).join(", ") +
+              (data.openfda.manufacturer_name?.length > 2 ? "..." : "")}
         </Typography>
         <Typography variant="subtitle" component="div">
           Productos

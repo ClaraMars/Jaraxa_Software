@@ -7,31 +7,14 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Typography } from "@mui/material";
 
-export function Links(props) {
-  const dense = true;
-  const secondary = false;
+export default function Links(props) {
+  const links = ["Ibuprofen", "Amoxicillin", "Omeprazole"];
 
-  // const handleInputValue = (value) => {
-  //   const syntheticEvent = {
-  //     target: {
-  //       value: value,
-  //     },
-  //   };
-  //   props.handleQuery(syntheticEvent, props.setQuery, "term");
-  // };
-
-  // const handleSearchLink = (linkText) => {
-  //   return (e) => {
-  //     e.preventDefault();
-  //     handleInputValue(linkText);
-  //     props.handleSearch(e);
-  //   };
-  // };
   return (
     <Box>
       <Typography variant="h6">Enlaces rápidos</Typography>
-      <List dense={dense}>
-        {props.links.map((link, index) => (
+      <List dense={true}>
+        {links.map((link, index) => (
           <ListItem key={index}>
             <ListItemIcon>
               <EastIcon />
@@ -41,8 +24,7 @@ export function Links(props) {
                 <Link
                   color="inherit"
                   underline="hover"
-                  // onClick={handleSearchLink(link)}
-                  onClick={props.handleSearch}
+                  onClick={props.handleLinkSearch}
                 >
                   {link}
                 </Link>
