@@ -132,16 +132,9 @@ export default function Home() {
           </Box>
         </FormControl>
         <Box className="c-home__box-search-filter">
-          <Chip
-            style={{ cursor: "pointer" }}
-            label="+ Añadir filtros"
-            color="primary"
-            variant="outlined"
-            onClick={handleAddFilter}
-          />
-          {addFilter && (
-            <Box mt={3}>
-              <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
+          <Box>
+            {addFilter && (
+              <FormControl sx={{ minWidth: 200 }} size="small">
                 <InputLabel id="search-fields-label">
                   Campo de búsqueda
                 </InputLabel>
@@ -170,8 +163,14 @@ export default function Home() {
                   </MenuItem>
                 </Select>
               </FormControl>
-            </Box>
-          )}
+            )}
+          </Box>
+          <Chip
+            label="+ Añadir filtros"
+            color="primary"
+            variant="outlined"
+            onClick={handleAddFilter}
+          />
         </Box>
       </Box>
       <Box pt={2} pb={10}>
