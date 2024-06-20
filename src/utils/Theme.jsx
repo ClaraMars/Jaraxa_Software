@@ -27,7 +27,7 @@ export function createLightTheme() {
           body: {
             backgroundImage: "linear-gradient(180deg, #BBDCFD, #FFF)",
             backgroundRepeat: "no-repeat",
-            backgroundSize: "100% 25%",
+            backgroundSize: "100vw 25vh",
           },
         },
       },
@@ -56,7 +56,7 @@ export function createDarkTheme() {
           body: {
             backgroundImage: "linear-gradient(#02294F, #090E1000)",
             backgroundRepeat: "no-repeat",
-            backgroundSize: "100% 25%",
+            backgroundSize: "100vw 25vh",
           },
         },
       },

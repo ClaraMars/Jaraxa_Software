@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import {
   BASE_FDA_API_ENDPOINTS,
   GradientCircularProgress,
@@ -23,23 +23,24 @@ import Enforcement from "./Enforcement";
 import Event from "./Events";
 import Label from "./Labels";
 
-const CustomTypographyHeader = styled(Typography)(() => ({
+const CustomTypographyDrugHeader = styled(Box)(({ theme }) => ({
+  padding: "1rem",
+  backgroundColor: theme.palette.mode === "dark" ? "#02294F" : "#BBDCFD",
+}));
+
+const CustomTypographyDetailsHeader = styled(Typography)(() => ({
   cursor: "pointer",
   textAlign: "center",
   minWidth: 130,
   paddingBottom: "0.5rem",
 }));
 
-const CustomTypographyCardHeader = styled(Box)(({ theme }) => ({
-  padding: "1rem",
-  backgroundColor: theme.palette.mode === "dark" ? "#02294F" : "#BBDCFD",
-}));
-
 export default function Details() {
   const { applicationNumber } = useParams();
   const location = useLocation();
-  const data = location.state.data;
-  const isOpenfdaNotEmpty = Object.keys(data.openfda || {}).length !== 0;
+  const navigate = useNavigate();
+  const data = location?.state?.data;
+  const isOpenfdaNotEmpty = Object.keys(data?.openfda || {}).length !== 0;
 
   const [generalInfo, setGeneralInfo] = useState(true);
   const [eventsState, setEventsState] = useState(null);
@@ -80,19 +81,19 @@ export default function Details() {
     {
       data: resultsState.enforcements[0]?.data[0],
       Component: Enforcement,
-      title: "Retiros de mercado",
+      title: "Retirada de mercado",
     },
   ];
 
-  const filteredOpenFda = Object.entries(data.openfda).filter(
-    ([key, value]) => {
+  const filteredOpenFda =
+    isOpenfdaNotEmpty &&
+    Object.entries(data?.openfda).filter(([key, value]) => {
       return (
         key !== "application_number" &&
         key !== "brand_name" &&
         key !== "generic_name"
       );
-    }
-  );
+    });
 
   const handleToggleGeneralInfo = () => {
     setGeneralInfo(true);
@@ -102,6 +103,10 @@ export default function Details() {
     setGeneralInfo(false);
     setRenderComponent(true);
     setSelectedComponent(index);
+  };
+
+  const handleBack = () => {
+    navigate("/");
   };
 
   useEffect(() => {
@@ -116,23 +121,23 @@ export default function Details() {
   }, []);
 
   return (
-    <>
+    <Box p="0 5rem">
       <Link
         href="#"
         underline="hover"
         display={"flex"}
         alignItems={"center"}
         gap={2}
-        onClick={() => window.history.back()}
+        onClick={handleBack}
       >
         <WestRounded />
         Volver
       </Link>
-      <Box mt={3}>
+      <Box mt={3} mb={3} p={1} pb={4}>
         <Typography variant="h4" mb={3}>
           Medicamento con {applicationNumber}
         </Typography>
-        <CustomTypographyCardHeader>
+        <CustomTypographyDrugHeader>
           {isOpenfdaNotEmpty ? (
             <>
               <Typography variant="h4">
@@ -149,14 +154,14 @@ export default function Details() {
           <Typography variant="h6" mt={1} color={"text.secondary"}>
             {data.openfda?.application_number?.join(", ") ?? applicationNumber}
           </Typography>
-        </CustomTypographyCardHeader>
+        </CustomTypographyDrugHeader>
 
         {isLoading ? (
           <GradientCircularProgress />
         ) : (
-          <Box mt={4}>
+          <Box mt={4} mb={4}>
             <Box display={"flex"} gap={4}>
-              <CustomTypographyHeader
+              <CustomTypographyDetailsHeader
                 style={{
                   borderBottom: generalInfo
                     ? "2px solid #90caf9"
@@ -167,12 +172,12 @@ export default function Details() {
                 onClick={() => handleToggleGeneralInfo(selectedComponent)}
               >
                 Información general
-              </CustomTypographyHeader>
+              </CustomTypographyDetailsHeader>
               {components.map(
                 ({ title }, index, data) =>
                   data[index].data !== null &&
                   data[index].data !== undefined && (
-                    <CustomTypographyHeader
+                    <CustomTypographyDetailsHeader
                       key={index}
                       style={{
                         borderBottom:
@@ -189,7 +194,7 @@ export default function Details() {
                       onClick={() => handleToggleComponents(index)}
                     >
                       {title}
-                    </CustomTypographyHeader>
+                    </CustomTypographyDetailsHeader>
                   )
               )}
             </Box>
@@ -320,6 +325,6 @@ export default function Details() {
           </Box>
         )}
       </Box>
-    </>
+    </Box>
   );
 }

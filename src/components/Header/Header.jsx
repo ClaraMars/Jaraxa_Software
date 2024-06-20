@@ -119,7 +119,7 @@ export default function HideAppBar(props) {
   return (
     <>
       <CustomHeader className="c-header__appbar" position="static">
-        <Toolbar>
+        <Toolbar id="toolbar-anchor">
           <Box className="c-header__box">
             <CustomHeaderTitle variant="h6" component="div">
               Jaraxa Software
@@ -138,7 +138,6 @@ export default function HideAppBar(props) {
           </Box>
         </Toolbar>
       </CustomHeader>
-      <Toolbar id="toolbar-anchor" />
       <ScrollTop {...props}>
         <CustomFab size="small" aria-label="scroll back to top">
           <KeyboardArrowUpIcon />

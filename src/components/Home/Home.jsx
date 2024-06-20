@@ -40,8 +40,8 @@ export default function Home() {
   const [query, setQuery] = useState({
     term: "",
     limit: 10,
-    order: "asc",
     skip: 0,
+    filter: "",
   });
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,16 +58,22 @@ export default function Home() {
       return;
     }
 
-    const trimmedSearchTerm = searchTerm.trim();
-    console.log(trimmedSearchTerm);
-    if (trimmedSearchTerm.includes(" ")) {
-      console.log("contains space");
-    }
+    const trimmedSearchTerm = searchTerm
+      .trim()
+      .split(" ")
+      .map((term) => `*${term}*`);
 
     const hasFilter = searchTermFilter
-      ? `${searchTermFilter}:${trimmedSearchTerm}`
-      : `${trimmedSearchTerm}`;
-    const searchUrl = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?&search=${hasFilter}&limit=${limit}&skip=${query.skip}`;
+      ? `${searchTermFilter}:(${trimmedSearchTerm.join("+AND+")})`
+      : `(${trimmedSearchTerm.join("+AND+")})`;
+
+    setQuery((prevState) => ({
+      ...prevState,
+      limit: changeLimit,
+      filter: hasFilter,
+    }));
+    console.log(query);
+    const searchUrl = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?&search=${hasFilter}&limit=${changeLimit}&skip=${query.skip}`;
     await getDrugsResults(searchUrl, setResults, setIsLoading, setError);
     setSearchPerformed(true);
   };
@@ -81,14 +87,23 @@ export default function Home() {
   };
 
   const handleChangeLimit = (e) => {
-    setQuery((prevState) => ({ ...prevState, limit: e.target.value }));
     setChangeLimit(e.target.value);
+    setQuery((prevState) => ({ ...prevState, limit: e.target.value }));
   };
 
   const handleLinkSearch = (e) => {
     e.preventDefault();
     setQuery((prevState) => ({ ...prevState, term: e.target.innerText }));
     handleSearch(e, e.target.innerText, query.limit);
+  };
+
+  const handleResetSearch = () => {
+    setQuery({ term: "", limit: 10, skip: 0, filter: "" });
+    setResults(null);
+    setSearchPerformed(false);
+    setAddFilter(false);
+    setSearchTermFilter("");
+    setChangeLimit(10);
   };
 
   useEffect(() => {
@@ -101,7 +116,7 @@ export default function Home() {
   }, [error]);
 
   return (
-    <>
+    <Box p="0 5rem">
       <Box className="c-home__box-titles">
         <CustomTypographyH1 variant="h1">
           FDA Drug
@@ -139,18 +154,27 @@ export default function Home() {
               size="small"
               fullWidth
             />
-            <Button
-              className="c-home__button"
-              type="submit"
-              variant="contained"
-            >
-              Buscar
-            </Button>
+            <Box className="c-home__buttons-wrapper">
+              <Button
+                className="c-home__button"
+                type="submit"
+                variant="contained"
+              >
+                Buscar
+              </Button>
+              <Button
+                className="c-home__button"
+                variant="contained"
+                onClick={handleResetSearch}
+              >
+                Resetear
+              </Button>
+            </Box>
           </Box>
         </FormControl>
         <Box className="c-home__filter-wrapper">
           <Chip
-            disabled={addFilter}
+            disabled={addFilter || searchPerformed}
             label="+ Añadir filtros"
             color="primary"
             variant="outlined"
@@ -169,6 +193,7 @@ export default function Home() {
                     value={searchTermFilter}
                     label="Campo de búsqueda"
                     onChange={handleChangeFilter}
+                    disabled={searchPerformed}
                   >
                     <MenuItem value="">
                       <em>None</em>
@@ -202,7 +227,6 @@ export default function Home() {
                     <MenuItem value={25}>25</MenuItem>
                     <MenuItem value={50}>50</MenuItem>
                     <MenuItem value={100}>100</MenuItem>
-                    <MenuItem value={"all"}>Todos</MenuItem>
                   </Select>
                 </FormControl>
               </>
@@ -233,6 +257,6 @@ export default function Home() {
           <Links handleLinkSearch={handleLinkSearch} />
         )}
       </Box>
-    </>
+    </Box>
   );
 }

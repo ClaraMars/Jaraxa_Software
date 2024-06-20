@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Chip, Typography } from "@mui/material";
 
 export default function Enforcement(props) {
   const data = props.data;
@@ -9,6 +9,18 @@ export default function Enforcement(props) {
 
   return (
     <Box display={"flex"} flexDirection={"column"} gap={2} mb={2}>
+      <Chip
+        style={{ width: "100px", marginLeft: "auto" }}
+        label={data.status}
+        color={
+          data.status === "Completed"
+            ? "success"
+            : data.status === "Terminated"
+            ? "info"
+            : "warning"
+        }
+        variant="outlined"
+      />
       {filteredData.map(([key, value]) => (
         <Typography key={key}>
           {key.charAt(0).toUpperCase() + key.slice(1)}:{" "}

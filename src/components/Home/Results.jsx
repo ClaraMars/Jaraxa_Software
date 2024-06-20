@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Alert, Box, Button, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { getDrugsResults } from "../../utils/Fetch";
 import {
   BASE_FDA_API_ENDPOINTS,
@@ -14,18 +13,14 @@ export default function Results(props) {
   const [page, setPage] = useState(1);
   const [loadMoreResults, setLoadMoreResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const getMoreResults = async () => {
     const newPage = page + 1;
     setPage(newPage);
     const skip = props.query.limit * page;
-    const url = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?search=${props.query.term}&limit=${props.query.limit}&skip=${skip}`;
-    await getDrugsResults(
-      url,
-      setLoadMoreResults,
-      setIsLoading,
-      props.setError
-    );
+    const url = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?search=${props.query.filter}&limit=${props.query.limit}&skip=${skip}`;
+    await getDrugsResults(url, setLoadMoreResults, setIsLoading, setError);
   };
 
   const handleLoadMore = async () => {
@@ -49,7 +44,7 @@ export default function Results(props) {
       <Typography variant="h6" mb={3}>
         Resultados de la búsqueda
       </Typography>
-      {data && (
+      {data ? (
         <>
           {data.totalResults !== 0 && (
             <Typography mb={3}>
@@ -57,25 +52,30 @@ export default function Results(props) {
             </Typography>
           )}
 
-          <Grid container spacing={2}>
+          <Box
+            margin={"0 auto"}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
             {props.isLoading ? (
               <GradientCircularProgress />
             ) : props.error ? (
               <Alert severity="error">No se encontraron resultados.</Alert>
             ) : (
-              <Box>
-                <Grid2 container spacing={2}>
+              <Box sx={{ margin: "0 auto" }}>
+                <Grid container justifyContent={"center"}>
                   {data.data.map((drug, index) => (
                     <Card key={index} results={drug} />
                   ))}
-                </Grid2>
+                </Grid>
                 {isLoading && <GradientCircularProgress />}
                 {props.loadMoreResults && props.loadMoreResults.data && (
-                  <Grid2 container spacing={2}>
+                  <Grid>
                     {props.loadMoreResults.data.map((drug, index) => (
                       <Card key={index} results={drug} />
                     ))}
-                  </Grid2>
+                  </Grid>
                 )}
                 {data.data.length < data.totalResults && (
                   <Box display="flex" justifyContent="center">
@@ -91,8 +91,14 @@ export default function Results(props) {
                 )}
               </Box>
             )}
-          </Grid>
+          </Box>
         </>
+      ) : (
+        error && (
+          <Alert severity="error">
+            Algo no ha ido como debía. Inténtalo de nuevo.
+          </Alert>
+        )
       )}
     </>
   );
