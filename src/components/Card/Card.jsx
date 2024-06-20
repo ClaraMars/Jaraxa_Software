@@ -1,13 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { CardHeader } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Chip from "@mui/material/Chip";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Chip,
+  Divider,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function DrugCard(props) {
   const navigate = useNavigate();
@@ -18,8 +24,6 @@ export default function DrugCard(props) {
     const applicationNumber = data.application_number;
     navigate(`/drug/${applicationNumber}`, { state: { data: data } });
   };
-
-  // console.log(data.openfda?.brand_name[0], data.products[0]?.brand_name);
 
   return (
     <Card sx={{ width: 300, margin: 1, border: "1px solid #454545" }}>
@@ -51,31 +55,46 @@ export default function DrugCard(props) {
       <Divider />
 
       <CardContent>
+        <Typography sx={{ fontSize: 12 }} color="text.secondary" gutterBottom>
+          Patocinador
+        </Typography>
         <Typography sx={{ fontSize: 14 }} gutterBottom>
           {data.sponsor_name}
         </Typography>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          {isOpenfdaNotEmpty &&
-            data.openfda.manufacturer_name?.slice(0, 2).join(", ") +
+        {isOpenfdaNotEmpty && (
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            {data.openfda.manufacturer_name?.slice(0, 2).join(", ") +
               (data.openfda.manufacturer_name?.length > 2 ? "..." : "")}
-        </Typography>
-        <Typography variant="subtitle" component="div">
-          Productos
-        </Typography>
-        <Typography variant="body2">
-          {data?.products.map((product) => (
-            <li key={product.product_number}>
-              <Typography component="span">
-                {product.active_ingredients
-                  .map(
-                    (ingredient) => `${ingredient.name} ${ingredient.strength}`
-                  )
-                  .join(", ")}
-              </Typography>
-            </li>
-          ))}
-        </Typography>
-        <Typography mt={2} variant="body1">
+          </Typography>
+        )}
+        <Accordion style={{ boxShadow: "none" }}>
+          <AccordionSummary
+            style={{ padding: 0 }}
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="products-content"
+            id="products-header"
+          >
+            Productos{" "}
+            <Typography component="span" color="text.secondary">
+              ({data.products.length})
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {data?.products.map((product) => (
+              <li key={product.product_number}>
+                <Typography component="span">
+                  {product.active_ingredients
+                    .map(
+                      (ingredient) =>
+                        `${ingredient.name} ${ingredient.strength}`
+                    )
+                    .join(", ")}
+                </Typography>
+              </li>
+            ))}
+          </AccordionDetails>
+        </Accordion>
+        <Typography variant="body1">
           Submisiones totales: {data.submissions ? data.submissions.length : 0}
         </Typography>
       </CardContent>

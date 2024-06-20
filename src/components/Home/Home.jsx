@@ -1,23 +1,25 @@
 import "./Home.css";
 import { useState, useEffect } from "react";
 import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { styled } from "@mui/system";
+import {
   BASE_FDA_API_ENDPOINTS,
   GradientCircularProgress,
 } from "../../utils/Utils";
 import { getDrugsResults } from "../../utils/Fetch";
 import Links from "./Links";
 import Results from "./Results";
-import { styled } from "@mui/system";
-import { Typography } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Chip from "@mui/material/Chip";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
 
 const CustomTypographyH1 = styled(Typography)({
   fontSize: "4rem",
@@ -46,17 +48,8 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [addFilter, setAddFilter] = useState(false);
   const [searchTermFilter, setSearchTermFilter] = useState("");
-  const [changeLimit, setChangeLimit] = useState(false);
-
-  //
-
-  // const FDA_API_ENDPOINTS = {
-  //   drugsFDA: `${BASE_FDA_API_ENDPOINTS.drugsFDA}?search=${query.term}&limit=${query.limit}`,
-  // };
-
-  // const handleQuery = (e, setter, property) => {
-  //   setter((prevState) => ({ ...prevState, [property]: e.target.value }));
-  // };
+  const [changeLimit, setChangeLimit] = useState(10);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   const handleSearch = async (e, searchTerm, limit) => {
     e.preventDefault();
@@ -75,8 +68,8 @@ export default function Home() {
       ? `${searchTermFilter}:${trimmedSearchTerm}`
       : `${trimmedSearchTerm}`;
     const searchUrl = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?&search=${hasFilter}&limit=${limit}&skip=${query.skip}`;
-    console.log(searchUrl);
     await getDrugsResults(searchUrl, setResults, setIsLoading, setError);
+    setSearchPerformed(true);
   };
 
   const handleAddFilter = () => {
@@ -89,7 +82,7 @@ export default function Home() {
 
   const handleChangeLimit = (e) => {
     setQuery((prevState) => ({ ...prevState, limit: e.target.value }));
-    setChangeLimit(true);
+    setChangeLimit(e.target.value);
   };
 
   const handleLinkSearch = (e) => {
@@ -126,7 +119,7 @@ export default function Home() {
           component="form"
           onSubmit={(e) => handleSearch(e, query.term, query.limit)}
         >
-          <Box className="c-home__form-search--input">
+          <Box className="c-home__input-wrapper">
             <TextField
               type="search"
               autoComplete="off"
@@ -146,13 +139,24 @@ export default function Home() {
               size="small"
               fullWidth
             />
-            <Button type="submit" variant="contained">
+            <Button
+              className="c-home__button"
+              type="submit"
+              variant="contained"
+            >
               Buscar
             </Button>
           </Box>
         </FormControl>
-        <Box className="c-home__box-search-filter">
-          <Box display={"flex"} gap={3}>
+        <Box className="c-home__filter-wrapper">
+          <Chip
+            disabled={addFilter}
+            label="+ Añadir filtros"
+            color="primary"
+            variant="outlined"
+            onClick={handleAddFilter}
+          />
+          <Box className="c-home__filter-select" gap={3}>
             {addFilter && (
               <>
                 <FormControl sx={{ minWidth: 200 }} size="small">
@@ -189,13 +193,11 @@ export default function Home() {
                   <Select
                     labelId="change-limit-label"
                     id="change-limit"
-                    value={searchTermFilter}
+                    value={changeLimit}
                     label="Por página"
                     onChange={handleChangeLimit}
+                    disabled={searchPerformed}
                   >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
                     <MenuItem value={10}>10</MenuItem>
                     <MenuItem value={25}>25</MenuItem>
                     <MenuItem value={50}>50</MenuItem>
@@ -206,16 +208,9 @@ export default function Home() {
               </>
             )}
           </Box>
-          <Chip
-            disabled={addFilter}
-            label="+ Añadir filtros"
-            color="primary"
-            variant="outlined"
-            onClick={handleAddFilter}
-          />
         </Box>
       </Box>
-      <Box pt={2} pb={10}>
+      <Box mt={6} pb={10}>
         {isLoading ? (
           <GradientCircularProgress />
         ) : error ? (
@@ -238,43 +233,6 @@ export default function Home() {
           <Links handleLinkSearch={handleLinkSearch} />
         )}
       </Box>
-
-      <div>
-        {/* <div className="c-home__grid-header-wrapper">
-          <h4>Resultados de la búsqueda</h4>
-          <div>
-            <FormControl size="small" sx={{ mr: 2, width: 150 }}>
-              <InputLabel id="limit-select-label">
-                Mostrar por página
-              </InputLabel>
-              <Select
-                labelId="limit-select-label"
-                id="limit-select"
-                value={query.limit}
-                label="limit"
-                onChange={(e) => handleQuery(e, setQuery, "limit")}
-              >
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={25}>25</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl size="small">
-              <InputLabel id="select-label">Ordenar</InputLabel>
-              <Select
-                labelId="select-label"
-                id="order-select"
-                value={query.order}
-                label="Order"
-                onChange={(e) => handleQuery(e, setQuery, "order")}
-              >
-                <MenuItem value="asc">Ascendente</MenuItem>
-                <MenuItem value="desc">Descendente</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-        </div> */}
-      </div>
     </>
   );
 }

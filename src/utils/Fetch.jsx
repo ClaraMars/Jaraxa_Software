@@ -1,5 +1,4 @@
 export async function getDrugsResults(url, setResults, setIsLoading, setError) {
-  console.log("url fetch", url);
   try {
     setIsLoading(true);
     const response = await fetch(url);
