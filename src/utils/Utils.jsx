@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box";
+import { Box, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export const BASE_FDA_API_ENDPOINTS = {
@@ -27,4 +27,30 @@ export function GradientCircularProgress() {
   );
 }
 
-export function SpinnerLineal() {}
+export function mapObject(obj) {
+  return Object.entries(obj).map(([key, value]) => {
+    if (typeof value === "object" && value !== null) {
+      return (
+        <Box key={key}>
+          <Typography>{key.charAt(0).toUpperCase() + key.slice(1)}:</Typography>
+          <Box style={{ marginLeft: "20px" }}>{mapObject(value)}</Box>
+        </Box>
+      );
+    } else if (Array.isArray(value)) {
+      return (
+        <Typography key={key}>
+          {key.charAt(0).toUpperCase() + key.slice(1)}:{" "}
+          {value.map((v) => v).join(", ")}
+        </Typography>
+      );
+    } else if (typeof value === "string" && value.startsWith("<table")) {
+      return <div key={key} dangerouslySetInnerHTML={{ __html: value }} />;
+    } else {
+      return (
+        <Typography key={key}>
+          {key.charAt(0).toUpperCase() + key.slice(1)}: {value}
+        </Typography>
+      );
+    }
+  });
+}

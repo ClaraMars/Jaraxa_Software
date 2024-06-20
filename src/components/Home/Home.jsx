@@ -72,7 +72,7 @@ export default function Home() {
       limit: changeLimit,
       filter: hasFilter,
     }));
-    console.log(query);
+
     const searchUrl = `${BASE_FDA_API_ENDPOINTS.drugsFDA}?&search=${hasFilter}&limit=${changeLimit}&skip=${query.skip}`;
     await getDrugsResults(searchUrl, setResults, setIsLoading, setError);
     setSearchPerformed(true);
@@ -124,8 +124,8 @@ export default function Home() {
         </CustomTypographyH1>
         <CustomTypographySubtitle variant="subtitle1">
           Busca información detallada sobre los medicamentos aprobados por la
-          FDA. Encuentra fácilmente nombres de marca, nombres genéricos y fechas
-          de aprobación de medicamentos.
+          FDA. Añade filtros para realizar una búsqueda más específica y haz
+          click en "Resetear" para realizar una nueva búsqueda.
         </CustomTypographySubtitle>
       </Box>
       <Box className="c-home__box-search">

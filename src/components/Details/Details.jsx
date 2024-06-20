@@ -1,8 +1,10 @@
+import "./Details.css";
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import {
   BASE_FDA_API_ENDPOINTS,
   GradientCircularProgress,
+  mapObject,
 } from "../../utils/Utils";
 import { getDrugsResults } from "../../utils/Fetch";
 import {
@@ -31,7 +33,6 @@ const CustomTypographyDrugHeader = styled(Box)(({ theme }) => ({
 const CustomTypographyDetailsHeader = styled(Typography)(() => ({
   cursor: "pointer",
   textAlign: "center",
-  minWidth: 130,
   paddingBottom: "0.5rem",
 }));
 
@@ -160,13 +161,14 @@ export default function Details() {
           <GradientCircularProgress />
         ) : (
           <Box mt={4} mb={4}>
-            <Box display={"flex"} gap={4}>
+            <Box className="c-details__info-header-wrapper">
               <CustomTypographyDetailsHeader
                 style={{
                   borderBottom: generalInfo
                     ? "2px solid #90caf9"
                     : "2px solid transparent",
                 }}
+                className="c-details__info-header"
                 variant="h6"
                 color={generalInfo ? "primary" : "textPrimary"}
                 onClick={() => handleToggleGeneralInfo(selectedComponent)}
@@ -185,6 +187,7 @@ export default function Details() {
                             ? "2px solid #90caf9"
                             : "2px solid transparent",
                       }}
+                      className="c-details__info-header"
                       variant="h6"
                       color={
                         renderComponent && selectedComponent === index
@@ -262,12 +265,7 @@ export default function Details() {
                               variant="outlined"
                             />
                           </Stack>
-                          {Object.entries(product).map(([key, value]) => (
-                            <Typography pl={3} key={key}>
-                              {key.charAt(0).toUpperCase() + key.slice(1)}:{" "}
-                              {Array.isArray(value) ? value.join(", ") : value}
-                            </Typography>
-                          ))}
+                          {mapObject(product)}
                         </li>
                       ))}
                     </AccordionDetails>
@@ -290,16 +288,7 @@ export default function Details() {
                           <Typography variant="h6" component="span">
                             {submission.submission_type}
                           </Typography>
-                          {Object.entries(submission).map(([key, value]) => (
-                            <Typography pl={3} key={key}>
-                              {key.charAt(0).toUpperCase() + key.slice(1)}:{" "}
-                              {Array.isArray(value)
-                                ? value.join(", ")
-                                : typeof value === "array"
-                                ? value.map((v) => v).join(", ")
-                                : value}
-                            </Typography>
-                          ))}
+                          {mapObject(submission)}
                         </li>
                       ))}
                     </AccordionDetails>
